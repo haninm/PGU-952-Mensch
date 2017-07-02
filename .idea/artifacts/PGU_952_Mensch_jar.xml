@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PGU-952-Mensch:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PGU_952_Mensch_jar</output-path>
+    <root id="archive" name="PGU-952-Mensch.jar">
+      <element id="module-output" name="PGU-952-Mensch" />
+      <element id="extracted-dir" path="$APPLICATION_HOME_DIR$/redist/annotations-java8.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

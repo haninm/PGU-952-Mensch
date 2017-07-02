@@ -29,7 +29,7 @@ public class Board {
         isOver = false;
         players = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            players.add(new Player(true, new ArrayList<>(), Color.values()[i].toString(), Color.values()[i], this));
+            players.add(new Player(true, new ArrayList<>(),Rules.playerNames[i], Color.values()[i], this));
             for (int j = 0; j < 4; j++) {
                 players.get(i).getBeads().add(new Bead(players.get(i), j));
             }
@@ -54,12 +54,12 @@ public class Board {
         }
 
 
-        System.out.println("is " + turn + " turn");
+
 
 
         Player player = findPlayerForPlay();
         if (player == null) {
-            print();
+
             message.append("Cant Find Any Active Player in Board\n");
             message.append("--------------------------------------\n");
             return;
@@ -69,22 +69,18 @@ public class Board {
 
         int toss = dice.toss();
         message.append("Player Toss is : " + toss + "\n");
-        System.out.println("toss is " + toss);
 
 
         Bead bead = findPlayerBeadForPlay(player, toss);
         if (bead == null) { // can find models.Bead
             message.append("You Can Move Any Bead!\n");
-            System.out.println("sorry you cant move !");
             nextTurn();
-            print();
             message.append("--------------------------------------\n");
             return;
         }
 
         move(bead, toss);
 
-        print();
         message.append("--------------------------------------\n");
         if (toss != 6)
             nextTurn();
@@ -92,26 +88,7 @@ public class Board {
     }
 
 
-    private void print() {
-        System.out.println("----------------------------------------");
-        for (Player p : players) {
-            for (Bead b : p.getBeads()) {
-                System.out.println("player : " + p.getName() + " - " + b.getNumberInPlayerSet()
-                        + " position :" + b.getPositionFromPlayer() + "( " + findBeadPositionFromBoard(b) + ")");
-            }
-        }
-        System.out.println("----------------------------------------");
-        for (Player p : players) {
-            for (Bead b : p.getBeads()) {
-                if (b.isInGame()) {
-                    System.out.println("player : " + p.getName() + " - " + b.getNumberInPlayerSet()
-                            + " position :" + b.getPositionFromPlayer() + "( " + findBeadPositionFromBoard(b) + ")");
-                }
-            }
-        }
-        System.out.println("----------------------------------------");
 
-    }
 
 
     @Nullable
@@ -221,11 +198,9 @@ public class Board {
     private boolean moveBeadTo(Bead bead, int newBeadPositionFromPlayer, int newBeadPositionFromBoard) {
 
 
-        System.out.println("lets get Move !");
 
         if (newBeadPositionFromPlayer == 1) { //first move
-            System.out.println("player : " + bead.getPlayer().getName() + " Join New Bead :" + bead.getNumberInPlayerSet());
-            message.append(bead.getPlayer().getName()+" -player join new Bead #"+bead.getNumberInPlayerSet()+"\n");
+            message.append(bead.getPlayer().getName() + " -player join new Bead #" + bead.getNumberInPlayerSet() + "\n");
             bead.setInGame(true);
             if (isEnemyInPosition(newBeadPositionFromBoard, bead)) { // if in start position has enemy
                 return moveBeadToAndKillEnemy(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
@@ -238,12 +213,8 @@ public class Board {
                 return moveBeadToAndKillEnemy(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
             }
 
-            message.append(bead.getPlayer().getName()+" -player , Bead #"+bead.getNumberInPlayerSet()
-            + " Move From : "+bead.getNumberInPlayerSet()+ " to : "+newBeadPositionFromPlayer+"\n");
-
-            System.out.println("player : " + bead.getPlayer().getName() + " bead :" + bead.getNumberInPlayerSet()
-                    + " move From :" + bead.getPositionFromPlayer() + " to : " + newBeadPositionFromPlayer + "(" +
-                    newBeadPositionFromBoard + ")");
+            message.append(bead.getPlayer().getName() + " -player , Bead #" + bead.getNumberInPlayerSet()
+                    + " Move From : " + bead.getNumberInPlayerSet() + " to : " + newBeadPositionFromPlayer + "\n");
 
 
             int oldBeadPositionFromBoard = findBeadPositionFromBoard(bead);
@@ -253,12 +224,9 @@ public class Board {
             if (newBeadPositionFromPlayer > 40) {
 
                 bead.setInFinalStage(true);
-                message.append(bead.getPlayer().getName()+" -player , Bead #"+bead.getNumberInPlayerSet()
+                message.append(bead.getPlayer().getName() + " -player , Bead #" + bead.getNumberInPlayerSet()
                         + " Arrive to Final Stage \n");
 
-                System.out.println("player : " + bead.getPlayer().getName() + " bead : "
-                        + bead.getNumberInPlayerSet() + " COmplete ! ");
-                checkPlayerIsWinn(bead.getPlayer());
             }
             return true;
         }
@@ -294,7 +262,7 @@ public class Board {
             table.add(player);
             players.remove(player);
             player.setComplete(true);
-            System.out.println("player : " + player.getName() + "COmplete ! ");
+
             message.append(player.getName() + "- Player has been Finished \n");
             addTableInMessage();
             if (players.size() == 0 && table.size() == 4) {
@@ -320,11 +288,8 @@ public class Board {
         bead.setPositionFromPlayer(newBeadPositionFromPlayer);
         enemy.setPositionFromPlayer(0);
         enemy.setInGame(false);
-        message.append(bead.getPlayer().getName()+" -player , You Kill Enemy in Your "+ newBeadPositionFromPlayer
-        +" position , you enemy is : " + enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()+"\n");
-
-        System.out.println("player : " + bead.getPlayer().getName() + " you kill Enemy in position "
-                + newBeadPositionFromBoard + " enemy is :" + enemy.getPlayer().getName() + " - " + enemy.getNumberInPlayerSet());
+        message.append(bead.getPlayer().getName() + " -player , You Kill Enemy in Your " + newBeadPositionFromPlayer
+                + " position , you enemy is : " + enemy.getPlayer().getName() + " #" + enemy.getNumberInPlayerSet() + "\n");
 
         return true;
     }
@@ -344,33 +309,30 @@ public class Board {
         switch (enemy.getPlayer().getColor()) {
             case YELLOW:
                 if (newBeadPositionFromBoard == 1) {
-                    System.out.println("enemy models.Bead is in safe House");
-                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
-                    +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
+
+                    message.append("enemy : " + enemy.getPlayer().getName() + " #" + enemy.getNumberInPlayerSet()
+                            + " is in safe house with number : " + newBeadPositionFromBoard + " \n");
                     return true;
                 }
                 return false;
             case RED:
                 if (newBeadPositionFromBoard == 11) {
-                    System.out.println("enemy models.Bead is in safe House");
-                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
-                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
+                    message.append("enemy : " + enemy.getPlayer().getName() + " #" + enemy.getNumberInPlayerSet()
+                            + " is in safe house with number : " + newBeadPositionFromBoard + " \n");
                     return true;
                 }
                 return false;
             case BLUE:
                 if (newBeadPositionFromBoard == 21) {
-                    System.out.println("enemy models.Bead is in safe House");
-                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
-                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
+                    message.append("enemy : " + enemy.getPlayer().getName() + " #" + enemy.getNumberInPlayerSet()
+                            + " is in safe house with number : " + newBeadPositionFromBoard + " \n");
                     return true;
                 }
                 return false;
             case GREEN:
                 if (newBeadPositionFromBoard == 31) {
-                    System.out.println("enemy models.Bead is in safe House");
-                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
-                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
+                    message.append("enemy : " + enemy.getPlayer().getName() + " #" + enemy.getNumberInPlayerSet()
+                            + " is in safe house with number : " + newBeadPositionFromBoard + " \n");
                     return true;
                 }
                 return false;
@@ -399,7 +361,6 @@ public class Board {
                 return moveBeadTo(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
             } else {
                 message.append("You Cant Move Your Bead , your Toss must be 6");
-                System.out.println("You cant Move , your Toss isn't 6");
                 return false;
             }
 
@@ -453,7 +414,7 @@ public class Board {
      * @param bead
      * @return bead position From the point of view models.Board
      */
-    private int findBeadPositionFromBoard(Bead bead) {
+    public int findBeadPositionFromBoard(Bead bead) {
         return this.findBeadPositionFromBoard(bead.getPositionFromPlayer(), bead.getPlayer());
     }
 
@@ -464,7 +425,7 @@ public class Board {
      * @param player
      * @return bead position From the point of view models.Board
      */
-    private int findBeadPositionFromBoard(int position, Player player) {
+    public int findBeadPositionFromBoard(int position, Player player) {
         if (position == 0)
             return 0;
 

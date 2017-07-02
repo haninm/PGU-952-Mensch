@@ -2,7 +2,7 @@ package models;
 
 /**
  * Created by hani on 02/07/2017.
- *
+ * <p>
  * final Stage : Arrive models.Bead in Goal Positions
  * point : point in each
  * positionFromPlayer : Each bead in View Of models.Player Can be On only 44 Position ,  [1->40] in Normal Play , [41->44] for Final Positions ( Goals ) and 0 for Waiting Position
@@ -13,11 +13,11 @@ public class Bead {
     private boolean inFinalStage;
     private Player player;
     private int numberInPlayerSet;
-    private int point ;
+    private int point;
     private int positionFromPlayer;
 
 
-    public Bead( Player player, int numberInPlayerSet) {
+    public Bead(Player player, int numberInPlayerSet) {
         this.inGame = false;
         this.inFinalStage = false;
         this.player = player;
@@ -26,10 +26,14 @@ public class Bead {
         this.positionFromPlayer = 0;
     }
 
-    public void increasePoint(int point){
-        this.point +=point;
+    public void increasePoint(int point) {
+        this.point += point;
     }
 
+    @Override
+    public String toString() {
+        return this.getPlayer().getName() + " - Player #" + numberInPlayerSet;
+    }
 
 
     //region Getters And Setters
