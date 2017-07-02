@@ -1,3 +1,5 @@
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,40 @@ public class Board {
     private Dice dice;
     private List<Player> table;
     private Bead[] positions;
+
+    //TODO : Constructor With make Objects
+
+    public void playGame() throws Exception {
+        int toss = dice.toss();
+
+        Player player = findPlayerForPlay();
+        if (player == null)
+            throw  new  Exception("Error in Finding Players Turn");
+
+
+    }
+
+    @Nullable
+    private Player findPlayerForPlay(){
+        for (Player p : getPlayers()){
+            if(p.getColor() == getTurn())
+                return  p;
+        }
+        return  null;
+    }
+
+
+
+
+    private Bead findPlayerBeadForPlay (Player player , int toss){
+
+        for(Bead bead : player.getBeads()){
+
+        }
+
+
+
+    }
 
 
     // region Getter and Setters

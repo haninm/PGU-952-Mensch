@@ -2,6 +2,7 @@
  * Created by hani on 02/07/2017.
  *
  * final Stage : Arrive Bead in Goal Positions
+ * point : point in each
  */
 public class Bead {
 
@@ -9,7 +10,8 @@ public class Bead {
     private boolean inFinalStage;
     private Player player;
     private int numberInPlayerSet;
-
+    private int point ;
+    private int positionFromPlayer;
 
     //region Getters And Setters
     public boolean isInGame() {
