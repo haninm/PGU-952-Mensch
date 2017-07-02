@@ -1,4 +1,4 @@
-import com.sun.javafx.css.Rule;
+package models;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class Player {
         for (Player p : board.getPlayers()){
             if(p!= this){
                 if ( p.getColor() == color){
-                    throw  new Exception("Player color must be Unique");
+                    throw  new Exception("models.Player color must be Unique");
                 }
             }
         }
@@ -78,8 +78,8 @@ public class Player {
 //        if(beads == null){
 //            this.beads = beads;
 //        }
-//        if (beads.size() != Rules.numberOfPlayerBeads) {
-//            throw new Exception("Number Of Beads is to Low or To High , number of Player Beads is : " + Rules.numberOfPlayerBeads);
+//        if (beads.size() != models.Rules.numberOfPlayerBeads) {
+//            throw new Exception("Number Of Beads is to Low or To High , number of models.Player Beads is : " + models.Rules.numberOfPlayerBeads);
 //        }
         this.beads = beads;
     }

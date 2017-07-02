@@ -1,14 +1,16 @@
+package models;
+
+
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.SwitchPoint;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by hani on 02/07/2017.
- * this is Class for Playing Mensch , each Board have 4 ( in default ) Player and Each player have 4 ( in Default) Bead
+ * this is Class for Playing Mensch , each models.Board have 4 ( in default ) models.Player and Each player have 4 ( in Default) models.Bead
  * <p>
- * positions: Each positions beads can be placed  [1 -> 56] , each Position can Have One bead , Except Start points ( 1 , 11 , 21 ,31 ) can have Multiple Of One Player ! and this Array Show Last One ! , position start from Yellow Player !
+ * positions: Each positions beads can be placed  [1 -> 56] , each Position can Have One bead , Except Start points ( 1 , 11 , 21 ,31 ) can have Multiple Of One models.Player ! and this Array Show Last One ! , position start from Yellow models.Player !
  */
 public class Board {
 
@@ -17,10 +19,14 @@ public class Board {
     private Dice dice;
     private List<Player> table;
     private Bead[] positions;
+    private StringBuilder message;
+    private boolean isOver;
+
 
     public Board() throws Exception {
+        message = new StringBuilder();
         turn = Color.YELLOW;
-
+        isOver = false;
         players = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             players.add(new Player(true, new ArrayList<>(), Color.values()[i].toString(), Color.values()[i], this));
@@ -35,29 +41,51 @@ public class Board {
     }
 
 
-    public void playGame() throws Exception {
+    public void nextRound() throws Exception {
+
+
+        message = new StringBuilder();
+        message.append("--------------------------------------\n");
+        if (isOver) {
+            message.append("Game is Over You Cant Play , please Start new Game");
+            addTableInMessage();
+            message.append("--------------------------------------\n");
+            return;
+        }
+
 
         System.out.println("is " + turn + " turn");
 
-        int toss = dice.toss();
-        System.out.println("toss is " + toss);
 
         Player player = findPlayerForPlay();
         if (player == null) {
             print();
-            throw new Exception("Error in Finding Players Turn");
+            message.append("Cant Find Any Active Player in Board\n");
+            message.append("--------------------------------------\n");
+            return;
         }
+        message.append(player.getName() + "-Player Turn \n");
+
+
+        int toss = dice.toss();
+        message.append("Player Toss is : " + toss + "\n");
+        System.out.println("toss is " + toss);
+
+
         Bead bead = findPlayerBeadForPlay(player, toss);
-        if (bead == null) { // can find Bead
+        if (bead == null) { // can find models.Bead
+            message.append("You Can Move Any Bead!\n");
             System.out.println("sorry you cant move !");
             nextTurn();
             print();
+            message.append("--------------------------------------\n");
             return;
         }
 
         move(bead, toss);
 
         print();
+        message.append("--------------------------------------\n");
         if (toss != 6)
             nextTurn();
 
@@ -89,15 +117,18 @@ public class Board {
     @Nullable
     private Player findPlayerForPlay() {
         for (Player p : getPlayers()) {
-            if (p.getColor() == getTurn())
-                return p;
+            if (p.getColor() == getTurn()) {
+                if (!p.isComplete()) {
+                    return p;
+                }
+            }
         }
         return null;
     }
 
 
     /**
-     * Smart for Choice best Bead for Move !
+     * Smart for Choice best models.Bead for Move !
      * if return null , player cant move any thing!
      *
      * @param player
@@ -115,8 +146,8 @@ public class Board {
             }
 
 
-            // region Bead Starting Game
-            // Bead is in Waiting Position and Want 6 to play game ( move to position 1 )
+            // region models.Bead Starting Game
+            // models.Bead is in Waiting Position and Want 6 to play game ( move to position 1 )
             if (bead.getPositionFromPlayer() == 0) {
                 bead.setPoint(0);
                 if (toss == 6) {
@@ -129,7 +160,7 @@ public class Board {
             //endregion
 
 
-            //region choice In Game Bead
+            //region choice In Game models.Bead
             bead.setPoint(bead.getPositionFromPlayer());
             int beadPositionAfterMoveFromPlayer = bead.getPositionFromPlayer() + toss;
             int beadPositionAfterMoveFromBoard
@@ -163,7 +194,7 @@ public class Board {
 
         }
 
-        //region Fin response ( Max Point Bead )
+        //region Fin response ( Max Point models.Bead )
 
         boolean canChoiceBead = false; // if All Point is 0 , player cant play
 
@@ -178,8 +209,11 @@ public class Board {
         }
         if (canChoiceBead)
             return res;
-        else
+        else {
+            message.append("Cant Find Any Bead for Move!\n");
             return null;
+        }
+
         //endregion
     }
 
@@ -191,6 +225,7 @@ public class Board {
 
         if (newBeadPositionFromPlayer == 1) { //first move
             System.out.println("player : " + bead.getPlayer().getName() + " Join New Bead :" + bead.getNumberInPlayerSet());
+            message.append(bead.getPlayer().getName()+" -player join new Bead #"+bead.getNumberInPlayerSet()+"\n");
             bead.setInGame(true);
             if (isEnemyInPosition(newBeadPositionFromBoard, bead)) { // if in start position has enemy
                 return moveBeadToAndKillEnemy(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
@@ -202,6 +237,9 @@ public class Board {
             if (isEnemyInPosition(newBeadPositionFromBoard, bead)) { // if in move  position has enemy
                 return moveBeadToAndKillEnemy(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
             }
+
+            message.append(bead.getPlayer().getName()+" -player , Bead #"+bead.getNumberInPlayerSet()
+            + " Move From : "+bead.getNumberInPlayerSet()+ " to : "+newBeadPositionFromPlayer+"\n");
 
             System.out.println("player : " + bead.getPlayer().getName() + " bead :" + bead.getNumberInPlayerSet()
                     + " move From :" + bead.getPositionFromPlayer() + " to : " + newBeadPositionFromPlayer + "(" +
@@ -215,6 +253,9 @@ public class Board {
             if (newBeadPositionFromPlayer > 40) {
 
                 bead.setInFinalStage(true);
+                message.append(bead.getPlayer().getName()+" -player , Bead #"+bead.getNumberInPlayerSet()
+                        + " Arrive to Final Stage \n");
+
                 System.out.println("player : " + bead.getPlayer().getName() + " bead : "
                         + bead.getNumberInPlayerSet() + " COmplete ! ");
                 checkPlayerIsWinn(bead.getPlayer());
@@ -234,12 +275,33 @@ public class Board {
         return true;
     }
 
+    private void addTableInMessage() {
+        message.append("Result table : \n");
+        message.append("---------\n");
+
+        int i = 1;
+        for (Player p : table) {
+            message.append(i + " - " + p.getName() + "\n");
+            i++;
+        }
+        message.append("---------\n");
+
+    }
+
     private void checkPlayerIsWinn(Player player) {
+
         if (checkAllBeadsIsInFinalStage(player)) {
             table.add(player);
             players.remove(player);
             player.setComplete(true);
             System.out.println("player : " + player.getName() + "COmplete ! ");
+            message.append(player.getName() + "- Player has been Finished \n");
+            addTableInMessage();
+            if (players.size() == 0 && table.size() == 4) {
+                isOver = true;
+                message.append("Game is Over !\n");
+                addTableInMessage();
+            }
         }
     }
 
@@ -258,6 +320,9 @@ public class Board {
         bead.setPositionFromPlayer(newBeadPositionFromPlayer);
         enemy.setPositionFromPlayer(0);
         enemy.setInGame(false);
+        message.append(bead.getPlayer().getName()+" -player , You Kill Enemy in Your "+ newBeadPositionFromPlayer
+        +" position , you enemy is : " + enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()+"\n");
+
         System.out.println("player : " + bead.getPlayer().getName() + " you kill Enemy in position "
                 + newBeadPositionFromBoard + " enemy is :" + enemy.getPlayer().getName() + " - " + enemy.getNumberInPlayerSet());
 
@@ -279,28 +344,33 @@ public class Board {
         switch (enemy.getPlayer().getColor()) {
             case YELLOW:
                 if (newBeadPositionFromBoard == 1) {
-                    System.out.println("enemy Bead is in safe House");
-
+                    System.out.println("enemy models.Bead is in safe House");
+                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
+                    +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
                     return true;
                 }
                 return false;
             case RED:
                 if (newBeadPositionFromBoard == 11) {
-                    System.out.println("enemy Bead is in safe House");
-
+                    System.out.println("enemy models.Bead is in safe House");
+                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
+                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
                     return true;
                 }
                 return false;
             case BLUE:
                 if (newBeadPositionFromBoard == 21) {
-                    System.out.println("enemy Bead is in safe House");
-
+                    System.out.println("enemy models.Bead is in safe House");
+                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
+                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
                     return true;
                 }
                 return false;
             case GREEN:
                 if (newBeadPositionFromBoard == 31) {
-                    System.out.println("enemy Bead is in safe House");
+                    System.out.println("enemy models.Bead is in safe House");
+                    message.append("enemy : " +enemy.getPlayer().getName()+" #"+enemy.getNumberInPlayerSet()
+                            +" is in safe house with number : "+newBeadPositionFromBoard +" \n");
                     return true;
                 }
                 return false;
@@ -318,7 +388,7 @@ public class Board {
         int newBeadPositionFromBoard;
 
 
-        // region is first Bead Move
+        // region is first models.Bead Move
         if (bead.getPositionFromPlayer() == 0) { // first bead move !
 
 
@@ -328,6 +398,7 @@ public class Board {
             if (toss == 6) {
                 return moveBeadTo(bead, newBeadPositionFromPlayer, newBeadPositionFromBoard);
             } else {
+                message.append("You Cant Move Your Bead , your Toss must be 6");
                 System.out.println("You cant Move , your Toss isn't 6");
                 return false;
             }
@@ -367,7 +438,7 @@ public class Board {
 
 
         for (Bead b : bead.getPlayer().getBeads()) {
-            if (positions[positionFromBoard] == b) { // is Friend Bead
+            if (positions[positionFromBoard] == b) { // is Friend models.Bead
                 return false;
             }
         }
@@ -377,21 +448,21 @@ public class Board {
 
 
     /**
-     * Convert Position From the point of view Player  to  From the point of view Board
+     * Convert Position From the point of view models.Player  to  From the point of view models.Board
      *
      * @param bead
-     * @return bead position From the point of view Board
+     * @return bead position From the point of view models.Board
      */
     private int findBeadPositionFromBoard(Bead bead) {
         return this.findBeadPositionFromBoard(bead.getPositionFromPlayer(), bead.getPlayer());
     }
 
     /**
-     * Convert Position From the point of view Player  to  From the point of view Board
+     * Convert Position From the point of view models.Player  to  From the point of view models.Board
      *
      * @param position
      * @param player
-     * @return bead position From the point of view Board
+     * @return bead position From the point of view models.Board
      */
     private int findBeadPositionFromBoard(int position, Player player) {
         if (position == 0)
@@ -399,7 +470,7 @@ public class Board {
 
         switch (player.getColor()) {
             case YELLOW:
-                return position; // Position Form Yellow Player and Board is same ( By Default)
+                return position; // Position Form Yellow models.Player and models.Board is same ( By Default)
             case RED:
                 if (position <= 40) { // bead is not in Goal Positions
                     int res = position + 10; // 10 is : Distance between First Cell and First Red Cell
@@ -436,6 +507,10 @@ public class Board {
 
     // region Getter and Setters
 
+
+    public StringBuilder getMessage() {
+        return message;
+    }
 
     public Color getTurn() {
         return turn;

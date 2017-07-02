@@ -1,9 +1,11 @@
+package models;
+
 /**
  * Created by hani on 02/07/2017.
  *
- * final Stage : Arrive Bead in Goal Positions
+ * final Stage : Arrive models.Bead in Goal Positions
  * point : point in each
- * positionFromPlayer : Each bead in View Of Player Can be On only 44 Position ,  [1->40] in Normal Play , [41->44] for Final Positions ( Goals ) and 0 for Waiting Position
+ * positionFromPlayer : Each bead in View Of models.Player Can be On only 44 Position ,  [1->40] in Normal Play , [41->44] for Final Positions ( Goals ) and 0 for Waiting Position
  */
 public class Bead {
 
