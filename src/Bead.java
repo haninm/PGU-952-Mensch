@@ -3,6 +3,7 @@
  *
  * final Stage : Arrive Bead in Goal Positions
  * point : point in each
+ * positionFromPlayer : Each bead in View Of Player Can be On only 44 Position ,  [1->40] in Normal Play , [41->44] for Final Positions ( Goals ) and 0 for Waiting Position
  */
 public class Bead {
 
@@ -13,7 +14,41 @@ public class Bead {
     private int point ;
     private int positionFromPlayer;
 
+
+    public Bead( Player player, int numberInPlayerSet) {
+        this.inGame = false;
+        this.inFinalStage = false;
+        this.player = player;
+        this.numberInPlayerSet = numberInPlayerSet;
+        this.point = 0;
+        this.positionFromPlayer = 0;
+    }
+
+    public void increasePoint(int point){
+        this.point +=point;
+    }
+
+
+
     //region Getters And Setters
+
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
+    public int getPositionFromPlayer() {
+        return positionFromPlayer;
+    }
+
+    public void setPositionFromPlayer(int positionFromPlayer) {
+        this.positionFromPlayer = positionFromPlayer;
+    }
+
     public boolean isInGame() {
         return inGame;
     }

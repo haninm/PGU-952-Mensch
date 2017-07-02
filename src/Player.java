@@ -17,13 +17,16 @@ public class Player {
     private Board board;
 
 
-    public Player(boolean isCpu, List<Bead> beads, String name, Color color) throws Exception {
+    public Player(boolean isCpu, List<Bead> beads, String name, Color color , Board board) throws Exception {
         setCpu(cpu);
         setBeads(beads);
         setName(name);
+        setBoard(board);
         this.complete = false;
         setColor(color);
     }
+
+
 
     //region Getter And Setters
 
@@ -72,9 +75,12 @@ public class Player {
     }
 
     public void setBeads(List<Bead> beads) throws Exception {
-        if (beads.size() != Rules.numberOfPlayerBeads) {
-            throw new Exception("Number Of Beads is to Low or To High , number of Player Beads is : " + Rules.numberOfPlayerBeads);
-        }
+//        if(beads == null){
+//            this.beads = beads;
+//        }
+//        if (beads.size() != Rules.numberOfPlayerBeads) {
+//            throw new Exception("Number Of Beads is to Low or To High , number of Player Beads is : " + Rules.numberOfPlayerBeads);
+//        }
         this.beads = beads;
     }
 
